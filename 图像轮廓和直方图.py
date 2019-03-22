@@ -19,4 +19,4 @@ axis('off')
 
 figure()
 hist(im.flatten(),128)# 第一个参数必须是一维数组，第二个参数是直方图小方块的个数。
-show()
+show()#一个脚本里只能有一个show()函数
