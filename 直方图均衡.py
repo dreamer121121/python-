@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 mpl.rcParams['font.sans-serif'] = ['SimHei']#设置字体
 
-
 im = array(Image.open("learn.jpg").convert("L"))
 
 #进行直方图均衡h化
@@ -23,6 +22,7 @@ hist1 = hist(array(im).flatten(),256)
 plt.savefig("./原始图像直方图.jpg")
 plt.close()
 title("原始图像直方图")
+
 
 figure(3)
 im2 = np.trunc(im2)
@@ -43,7 +43,6 @@ hist2 = hist(array(im2).flatten(),256)
 title("均衡后的直方图")
 plt.savefig("均衡后的直方图.jpg")
 plt.close()
-
 
 
 
