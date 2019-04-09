@@ -12,10 +12,8 @@ def process_image(imagename,resultname,params="--edge-thresh 10 --peak-thresh 5"
         im = Image.open(imagename).convert('L')
         im.save('tmp.pgm')
         imagename = 'tmp.pgm'
-
-    cmmd = str(r"D:\software\work\vlfeat-0.9.20-bin\vlfeat-0.9.20\bin\win64\sift.exe "+imagename+" --output="+resultname+
+    cmmd = str(r"E:\software\vlfeat-0.9.20-bin\vlfeat-0.9.20\bin\win64\sift.exe "+imagename+" --output="+resultname+
                 " "+params)
-
     os.system(cmmd)
     print ('processed', imagename, 'to', resultname)
 
