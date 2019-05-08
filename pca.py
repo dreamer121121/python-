@@ -48,3 +48,35 @@ def center(X):
     Y = array([[ X[i,j]-rowsum[i]-colsum[j]+totalsum for i in range(n) ] for j in range(n)])
     
     return Y
+
+
+from PIL import Image
+from numpy import *
+from pylab import *
+import os
+
+def read_file():
+    path = r'C:\Users\Tao xia\Desktop\python-计算机视觉\data\fontimages\a_thumbs'
+    ims = [os.path.join(path,f) for f in os.listdir(path) if f.endswith(".jpg")]
+    return ims
+
+imlist = read_file()
+im = array(Image.open(imlist[0]))
+m,n = im.shape[0:2]
+imnbr = len(imlist)
+
+#创建矩阵，保存所有压平后的图像数据
+immatrix = array([array(Image.open(im)).flatten() for im in imlist],'f')
+
+#执行PCA
+V,S,immean = pca(immatrix)
+
+#显示图像
+figure()
+gray()
+subplot(2,4,1)
+imshow(immean.reshape(m,n))
+for i in range(7):
+    subplot(2,4,i+2)
+    imshow(V[i].reshape(m,n))
+show()
