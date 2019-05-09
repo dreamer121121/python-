@@ -15,20 +15,32 @@ def pca(X):
     # center data
     mean_X = X.mean(axis=0)
     X = X - mean_X
-    
-    # if dim>num_data:
-        # PCA - compact trick used
-    M = dot(X,X.T) # covariance matrix
+
+
+    M = dot(X.T,X) # covariance matrix
     print("---协方差矩阵---",M.shape)
     e,EV = linalg.eigh(M) # eigenvalues and eigenvectors
     print("---e---",e.shape)
+    print("--e---",e)
     print("--EV--",EV.shape)
-    tmp = dot(X.T,EV).T # this is the compact trick
-    print("--tmp--",tmp.shape)
-    V = tmp[::-1] # reverse since last eigenvectors are the ones we want
+    # tmp = dot(X.T,EV).T # this is the compact trick
+    # print("--tmp--",tmp.shape)
+    V = EV # reverse since last eigenvectors are the ones we want
     S = sqrt(e)[::-1] # reverse since eigenvalues are in increasing order
-    for i in range(V.shape[1]):
-        V[:,i] /= S
+
+    # if dim>num_data:
+        # PCA - compact trick used
+    # M = dot(X.T,X) # covariance matrix
+    # print("---协方差矩阵---",M.shape)
+    # e,EV = linalg.eigh(M) # eigenvalues and eigenvectors
+    # print("---e---",e.shape)
+    # print("--EV--",EV.shape)
+    # tmp = dot(X.T,EV).T # this is the compact trick
+    # print("--tmp--",tmp.shape)
+    # V = tmp[::-1] # reverse since last eigenvectors are the ones we want
+    # S = sqrt(e)[::-1] # reverse since eigenvalues are in increasing order
+    # for i in range(V.shape[1]):
+    #     V[:,i] /= S
     # else:
     #     print("---SVD---")
     #     # PCA - SVD used
