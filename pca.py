@@ -11,44 +11,25 @@ def pca(X):
     # get dimensions
     num_data,dim = X.shape
 
-    print("---X---",X.shape)
+
     # center data
     mean_X = X.mean(axis=0)
     X = X - mean_X
 
-
-    M = dot(X.T,X) # covariance matrix
-    print("---协方差矩阵---",M.shape)
-    e,EV = linalg.eigh(M) # eigenvalues and eigenvectors
-    print("---e---",e.shape)
-    print("--e---",e)
-    print("--EV--",EV.shape)
-    # tmp = dot(X.T,EV).T # this is the compact trick
-    # print("--tmp--",tmp.shape)
-    V = EV # reverse since last eigenvectors are the ones we want
-    S = sqrt(e)[::-1] # reverse since eigenvalues are in increasing order
-
-    # if dim>num_data:
+    if dim>num_data:
         # PCA - compact trick used
-    # M = dot(X.T,X) # covariance matrix
-    # print("---协方差矩阵---",M.shape)
-    # e,EV = linalg.eigh(M) # eigenvalues and eigenvectors
-    # print("---e---",e.shape)
-    # print("--EV--",EV.shape)
-    # tmp = dot(X.T,EV).T # this is the compact trick
-    # print("--tmp--",tmp.shape)
-    # V = tmp[::-1] # reverse since last eigenvectors are the ones we want
-    # S = sqrt(e)[::-1] # reverse since eigenvalues are in increasing order
-    # for i in range(V.shape[1]):
-    #     V[:,i] /= S
-    # else:
-    #     print("---SVD---")
-    #     # PCA - SVD used
-    #     U,S,V = linalg.svd(X) #进行SVD分解
-    #     print("---S.shape--",S.shape)
-    #     print("---V.shape--",V.shape)
-    #     print("---U.shape--",U.shape)
-    #     V = V[:num_data] # only makes sense to return the first num_data
+        M = dot(X.T,X) # covariance matrix
+        e,EV = linalg.eigh(M) # eigenvalues and eigenvectors
+        tmp = dot(X.T,EV).T # this is the compact trick
+        V = tmp[::-1] # reverse since last eigenvectors are the ones we want
+        S = sqrt(e)[::-1] # reverse since eigenvalues are in increasing order
+        for i in range(V.shape[1]):
+            V[:,i] /= S
+    else:
+        print("---SVD---")
+        # PCA - SVD used
+        U,S,V = linalg.svd(X) #进行SVD分解
+        V = V[:num_data] # only makes sense to return the first num_data
     #
     # return the projection matrix, the variance and the mean
     return V,S,mean_X
@@ -75,6 +56,7 @@ from PIL import Image
 from numpy import *
 from pylab import *
 import os
+import pickle
 
 def read_file():
     path = r'C:\Users\dreamer\Desktop\reposite\python计算机视觉\data\fontimages\a_thumbs'
@@ -91,6 +73,13 @@ immatrix = array([array(Image.open(im)).flatten() for im in imlist],'f')
 
 #执行PCA
 V,S,immean = pca(immatrix)
+
+#保存成pickle模型
+f = open('a_pca_modes.pkl','wb')
+pickle.dump(immean,f)
+pickle.dump(V,f)
+f.close()
+
 
 #显示图像
 figure()
