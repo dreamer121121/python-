@@ -1,7 +1,7 @@
 from PIL import Image
+import os
 from numpy import *
 from pylab import *
-import os
 
 
 def process_image(imagename,resultname,params="--edge-thresh 10 --peak-thresh 5"):
@@ -12,7 +12,8 @@ def process_image(imagename,resultname,params="--edge-thresh 10 --peak-thresh 5"
         im = Image.open(imagename).convert('L')
         im.save('tmp.pgm')
         imagename = 'tmp.pgm'
-    cmmd = str(r"D:\software\work\vlfeat-0.9.20-bin\vlfeat-0.9.20\bin\win64\sift.exe "+imagename+" --output="+resultname+
+
+    cmmd = str("sift "+imagename+" --output="+resultname+
                 " "+params)
     os.system(cmmd)
     print ('processed', imagename, 'to', resultname)
@@ -43,7 +44,7 @@ def plot_features(im,locs,circle=False):
     imshow(im)
     if circle:
         for p in locs:
-            draw_circle(p[:2],p[2])
+            draw_circle(p[:2],p[2]) 
     else:
         plot(locs[:,0],locs[:,1],'ob')
     axis('off')
@@ -108,7 +109,7 @@ def plot_matches(im1,im2,locs1,locs2,matchscores,show_below=True):
     cols1 = im1.shape[1]
     for i,m in enumerate(matchscores):
         if m>0:
-            plot([locs1[i][0],locs2[m][0]+cols1],[locs1[i][1],locs2[m][1]],'c')
+            plot([locs1[i][1],locs2[m][1]+cols1],[locs1[i][0],locs2[m][0]],'c')
     axis('off')
 
 
