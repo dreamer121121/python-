@@ -47,13 +47,11 @@ class Vocabulary(object):
     def project(self,descriptors):
         """ Project descriptors on the vocabulary
             to create a histogram of words. """
-
         # histogram of image words 
         imhist = zeros((self.nbr_words))
         words,distance = vq(descriptors,self.voc) #注意words是index
         for w in words:
             imhist[w] += 1
-
         return imhist
 
     def get_words(self,descriptors):
