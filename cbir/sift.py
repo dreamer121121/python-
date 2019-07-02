@@ -6,7 +6,7 @@ from pylab import *
 
 def process_image(imagename,resultname,params="--edge-thresh 10 --peak-thresh 5"):
     """ Process an image and save the results in a file. """
-
+    """调用vfeat计算sift特征"""
     if imagename[-3:] != 'pgm':
         # create a pgm file
         im = Image.open(imagename).convert('L')

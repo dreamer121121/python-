@@ -1,10 +1,13 @@
 from numpy import *
 import pickle
-import sqlite3 as sqlite  #pysqkite3在python3里面已经不再使用直接使用sqlite3即可
+import sqlite3 as sqlite
+
+
 
 class Indexer(object):
     
     def __init__(self,db,voc):
+        #连接数据库
         """ Initialize with the name of the database 
             and a vocabulary object. """
             
@@ -12,9 +15,11 @@ class Indexer(object):
         self.voc = voc
     
     def __del__(self):
+        #关闭数据库连接
         self.con.close()
     
     def db_commit(self):
+        #提交修改
         self.con.commit()
     
     def get_id(self,imname):
@@ -37,19 +42,20 @@ class Indexer(object):
         return im != None
     
     def add_to_index(self,imname,descr):
-        """ Take an image with feature descriptors, 
+        #将每一张图像加入到数据库中，就是将每一张图像填到数据库中的三张表中。
+        """ Take an image with feature descriptors,
             project on vocabulary and add to database. """
-            
+
         if self.is_indexed(imname): return
-        print 'indexing', imname
+        print ('indexing', imname)
         
         # get the imid
-        imid = self.get_id(imname)
+        imid = self.get_id(imname) #获取当前图像的id号
         
         # get the words
         imwords = self.voc.project(descr)
         nbr_words = imwords.shape[0]
-        
+
         # link each word to image
         for i in range(nbr_words):
             word = imwords[i]
@@ -62,11 +68,12 @@ class Indexer(object):
     
     def create_tables(self): 
         """ Create the database tables. """
+        #总共创建三张表
         
         self.con.execute('create table imlist(filename)')
         self.con.execute('create table imwords(imid,wordid,vocname)')
-        self.con.execute('create table imhistograms(imid,histogram,vocname)')        
-        self.con.execute('create index im_idx on imlist(filename)')
+        self.con.execute('create table imhistograms(imid,histogram,vocname)')
+        self.con.execute('create index im_idx on imlist(filename)') #创建索引
         self.con.execute('create index wordid_idx on imwords(wordid)')
         self.con.execute('create index imid_idx on imwords(imid)')
         self.con.execute('create index imidhist_idx on imhistograms(imid)')
@@ -84,15 +91,18 @@ class Searcher(object):
         self.con.close()
     
     def get_imhistogram(self,imname):
+
         """ Return the word histogram for an image. """
-        
+        print("filename",imname)
         im_id = self.con.execute(
             "select rowid from imlist where filename='%s'" % imname).fetchone()
+        print('im_id',im_id)
         s = self.con.execute(
             "select histogram from imhistograms where rowid='%d'" % im_id).fetchone()
+        print('s',s)
         
         # use pickle to decode NumPy arrays from string
-        return pickle.loads(str(s[0]))
+        return pickle.loads(s[0])
     
     def candidates_from_word(self,imword):
         """ Get list of images containing imword. """
@@ -105,8 +115,9 @@ class Searcher(object):
         """ Get list of images with similar words. """
         
         # get the word ids
-        words = imwords.nonzero()[0]
-        
+        words = imwords.nonzero()[0]#返回的是非零元素的索引
+        print('--words--',words)
+
         # find candidates
         candidates = []
         for word in words:
