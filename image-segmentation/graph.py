@@ -1,5 +1,6 @@
 class Node:
     def __init__(self, parent, rank=0, size=1):
+        #初始化的时候每一个node指包含一个元素，且设置其parent为i
         self.parent = parent
         self.rank = rank
         self.size = size
@@ -12,6 +13,7 @@ class Forest:
     def __init__(self, num_nodes):
         self.nodes = [Node(i) for i in range(num_nodes)]
         self.num_sets = num_nodes
+        print("--initial nodes--",self.nodes[50316])
 
     def size_of(self, i):
         return self.nodes[i].size
@@ -22,6 +24,8 @@ class Forest:
             temp = self.nodes[temp].parent
 
         self.nodes[n].parent = temp
+        if n == 10558:
+            print("--10558--",self.nodes[n].parent)
         return temp
 
     def merge(self, a, b):
@@ -91,14 +95,16 @@ def remove_small_components(forest, graph, min_size):
 def segment_graph(graph_edges, num_nodes, const, min_size, threshold_func):
     # Step 1: initialization
     forest = Forest(num_nodes)
-    weight = lambda edge: edge[2]
+    weight = lambda edge: edge[2] #定义一个匿名函数
     sorted_graph = sorted(graph_edges, key=weight)  # 按权重对所有节点进行了升序排列。
-    threshold = [threshold_func(1, const) for _ in range(num_nodes)] #初始化的时候T函数的尺寸为1
+    threshold = [threshold_func(1, const) for _ in range(num_nodes)] #初始化的时候T函数的尺寸为1,为每个node添加T函数值，有多少个component就有多少个阈值
 
     # Step 2: merging
     for edge in sorted_graph:
         parent_a = forest.find(edge[0])
         parent_b = forest.find(edge[1])
+
+        #第一次合并，判断是否满足条件
         a_condition = weight(edge) <= threshold[parent_a]
         b_condition = weight(edge) <= threshold[parent_b]
 

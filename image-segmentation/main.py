@@ -48,7 +48,7 @@ def get_segmented_image(sigma, neighbor, K, min_comp_size, input_file, output_fi
     smooth = np.array(smooth)
 
     logger.info("Creating graph...")
-    graph_edges = build_graph(smooth, size[1], size[0], diff, neighbor == 8)
+    graph_edges = build_graph(smooth, size[1], size[0], diff, neighbor == 8) #返回8邻域中任意两个节点间的连接权值
 
 
     logger.info("Merging graph...")
