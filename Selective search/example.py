@@ -4,21 +4,23 @@ from __future__ import (
     print_function,
 )
 
-import skimage.data
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import selectivesearch
-
+from PIL import Image
+import numpy as np
 
 def main():
 
-    # loading astronaut image
-    img = skimage.data.astronaut()
+    # 载入图片
+    img = np.array(Image.open("./learn.jpg"))
 
-    # perform selective search
+    # 进行selective search
     img_lbl, regions = selectivesearch.selective_search(
         img, scale=500, sigma=0.9, min_size=10)
 
+    #获取矩形框的坐标
     candidates = set()
     for r in regions:
         # excluding same rectangle (with different segments)
@@ -33,7 +35,7 @@ def main():
             continue
         candidates.add(r['rect'])
 
-    # draw rectangles on the original image
+    #绘制矩形框
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
     ax.imshow(img)
     for x, y, w, h in candidates:

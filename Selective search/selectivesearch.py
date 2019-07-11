@@ -25,12 +25,13 @@ def _generate_segments(im_orig, scale, sigma, min_size):
     :return:
     """
     #首先使用基于图的图像搜索算法进行图像分割
-
+    print("--im_orig--",im_orig.shape)
     im_mask = skimage.segmentation.felzenszwalb(
         skimage.util.img_as_float(im_orig), scale=scale, sigma=sigma,
         min_size=min_size)
     print("--im_mask--",im_mask)
     print("--in_mask--",im_mask.shape)
+    #skimage.segmentation返回得的是in_mask标识的是im_orig中每一个像素对应的所属的类别
 
     # merge mask channel to the image as a 4th channel
     #这个操作值得借鉴
