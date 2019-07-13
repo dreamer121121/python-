@@ -77,6 +77,13 @@ def _sim_fill(r1, r2, imsize):
 
 
 def _calc_sim(r1, r2, imsize):
+    """
+    计算相邻的两个region之间的相似度
+    :param r1:
+    :param r2:
+    :param imsize:
+    :return:
+    """
     return (_sim_colour(r1, r2) + _sim_texture(r1, r2)
             + _sim_size(r1, r2, imsize) + _sim_fill(r1, r2, imsize))
 
@@ -104,7 +111,7 @@ def _calc_colour_hist(img):
         hist = numpy.concatenate(
             [hist] + [numpy.histogram(c, BINS, (0.0, 255.0))[0]])
 
-    # L1 normalize
+    # 归一化
     hist = hist / len(img)
 
     return hist
@@ -158,7 +165,7 @@ def _calc_texture_hist(img):
 
 def _extract_regions(img):
     """
-    提取分割后的原始区域
+    提取进行图像分割后的原始区域
     :param img:
     :return:
     """
@@ -195,10 +202,10 @@ def _extract_regions(img):
     # pass 3: calculate colour histogram of each region
     for k, v in list(R.items()):
 
-        # colour histogram
+         # colour histogram
         masked_pixels = hsv[:, :, :][img[:, :, 3] == k]
         R[k]["size"] = len(masked_pixels / 4)
-        R[k]["hist_c"] = _calc_colour_hist(masked_pixels) #为R中的每一个区域添加颜色直方图
+        R[k]["hist_c"] = _calc_colour_hist(masked_pixels)  # 为R中的每一个区域添加颜色直方图
 
         # texture histogram
         R[k]["hist_t"] = _calc_texture_hist(tex_grad[:, :][img[:, :, 3] == k])#为R中的每一个区域添加纹理直方图
@@ -209,6 +216,12 @@ def _extract_regions(img):
 def _extract_neighbours(regions):
 
     def intersect(a, b):
+        """
+        函数的嵌套，判断两个region是否邻接
+        :param a:
+        :param b:
+        :return:
+        """
         if (a["min_x"] < b["min_x"] < a["max_x"]
                 and a["min_y"] < b["min_y"] < a["max_y"]) or (
             a["min_x"] < b["max_x"] < a["max_x"]
@@ -224,8 +237,8 @@ def _extract_neighbours(regions):
     neighbours = []
     for cur, a in enumerate(R[:-1]):
         for b in R[cur + 1:]:
-            if intersect(a[1], b[1]):
-                neighbours.append((a, b))
+            if intersect(a[1], b[1]): #判断两个regions是否邻接
+                neighbours.append((a, b)) #若相邻则添加进neighbors
 
     return neighbours
 
@@ -286,12 +299,14 @@ def selective_search(
         return None, {}
 
     imsize = img.shape[0] * img.shape[1]
-    R = _extract_regions(img)
+    R = _extract_regions(img)  # 返回进行图像分割后的初始的每一个region的位置，纹理直方图，颜色直方图等信息
 
-    # extract neighbouring information
+    # 提取相邻的region pair
     neighbours = _extract_neighbours(R)
+    # print("--neighbors--",neighbours)
 
-    # calculate initial similarities
+    # 计算两个region之间的相似度
+    #neighbors此时的结构为[((),()),((),()),...]
     S = {}
     for (ai, ar), (bi, br) in neighbours:
         S[(ai, bi)] = _calc_sim(ar, br, imsize)
@@ -299,24 +314,24 @@ def selective_search(
     # hierarchal search
     while S != {}:
 
-        # get highest similarity
+        # 找到最大的相似度的区域
         i, j = sorted(S.items(), key=lambda i: i[1])[-1][0]
 
         # merge corresponding regions
-        t = max(R.keys()) + 1.0
-        R[t] = _merge_regions(R[i], R[j])
+        t = max(R.keys()) + 1.0 #新合并的区域的代号
+        R[t] = _merge_regions(R[i], R[j]) #返回合并的区域，并将其加入到R中
 
-        # mark similarities for regions to be removed
+        # 从S集中删除包含(Ri,*),(*,Rj)的所有的相似度
         key_to_delete = []
         for k, v in list(S.items()):
             if (i in k) or (j in k):
                 key_to_delete.append(k)
 
-        # remove old similarities of related regions
+
         for k in key_to_delete:
             del S[k]
 
-        # calculate similarity set with the new region
+        # 计算新的Region Rt与其Neighbors的相似度并添加到S集中
         for k in [a for a in key_to_delete if a != (i, j)]:
             n = k[1] if k[0] in (i, j) else k[0]
             S[(t, n)] = _calc_sim(R[t], R[n], imsize)
