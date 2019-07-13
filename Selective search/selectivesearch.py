@@ -157,6 +157,11 @@ def _calc_texture_hist(img):
 
 
 def _extract_regions(img):
+    """
+    提取分割后的原始区域
+    :param img:
+    :return:
+    """
 
     R = {}
 
@@ -193,10 +198,10 @@ def _extract_regions(img):
         # colour histogram
         masked_pixels = hsv[:, :, :][img[:, :, 3] == k]
         R[k]["size"] = len(masked_pixels / 4)
-        R[k]["hist_c"] = _calc_colour_hist(masked_pixels)
+        R[k]["hist_c"] = _calc_colour_hist(masked_pixels) #为R中的每一个区域添加颜色直方图
 
         # texture histogram
-        R[k]["hist_t"] = _calc_texture_hist(tex_grad[:, :][img[:, :, 3] == k])
+        R[k]["hist_t"] = _calc_texture_hist(tex_grad[:, :][img[:, :, 3] == k])#为R中的每一个区域添加纹理直方图
 
     return R
 
