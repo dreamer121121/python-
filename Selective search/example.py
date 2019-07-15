@@ -20,7 +20,7 @@ def main():
     img_lbl, regions = selectivesearch.selective_search(
         img, scale=500, sigma=0.9, min_size=10)
 
-    #获取矩形框的坐标
+           # 获取矩形框的坐标
     candidates = set()
     for r in regions:
         # excluding same rectangle (with different segments)
