@@ -157,11 +157,15 @@ def _calc_texture_hist(img):
 
 
 def _extract_regions(img):
-
+    """
+    提取原始的regions
+    :param img:
+    :return:
+    """
     R = {}
 
     # get hsv image
-    hsv = skimage.color.rgb2hsv(img[:, :, :3])
+    hsv = skimage.color.rgb2hsv(img[:, :, :3]) #为何要转化为hsv空间。
 
     # pass 1: count pixel positions
     for y, i in enumerate(img):
@@ -275,7 +279,7 @@ def selective_search(
 
     # load image and get smallest regions
     # region label is stored in the 4th value of each pixel [r,g,b,(region)]
-    img = _generate_segments(im_orig, scale, sigma, min_size)
+    img = _generate_segments(im_orig, scale, sigma, min_size) #返回的是三维矩阵(800,800,4)每一个像素的值和对应的所属的类别
 
     if img is None:
         return None, {}
