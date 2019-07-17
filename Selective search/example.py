@@ -44,7 +44,10 @@ def main():
             (x, y), w, h, fill=False, edgecolor='red', linewidth=1)
         ax.add_patch(rect)
 
+    plt.savefig('selective-searvh-result.jpg')
     plt.show()
+
+
 
 if __name__ == "__main__":
     main()

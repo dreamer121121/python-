@@ -73,9 +73,9 @@ if __name__ == '__main__':
                         help='a constant to control the threshold function of the predicate')
     parser.add_argument('--min-comp-size', type=int, default=2000,
                         help='a constant to remove all the components with fewer number of pixels')
-    parser.add_argument('--input-file', type=str, default="./assets/seg_test.jpg",
+    parser.add_argument('--input-file', type=str, default="./assets/learn.jpg",
                         help='the file path of the input image')
-    parser.add_argument('--output-file', type=str, default="./assets/seg_test_out.jpg",
+    parser.add_argument('--output-file', type=str, default="./assets/learn_out.jpg",
                         help='the file path of the output image')
     args = parser.parse_args()
 
